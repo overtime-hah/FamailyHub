@@ -189,6 +189,15 @@ PyJWT==2.4.0
 ---
 *日志自动维护，超过30天的日志条目将自动归档*
 
-- 🔧 **modified**: requirements.txt - 降级依赖包以兼容 CentOS 7 Python 3.6.8 (Flask 3.0→2.0, Werkzeug 3.0→2.0 等)  
-- 🔧 **modified**: CHANGELOG.md - 重写为完整使用手册，包含 CentOS 7 systemd 部署指南和依赖版本说明  
-- 🐛 **fixed**: CentOS 7 greenlet 编译失败 - requirements.txt 锁定 greenlet==2.0.2，文档补充 gcc/python3-devel 前置依赖  
+- 🔧 **modified**: requirements.txt - 降级依赖包以兼容 CentOS 7 Python 3.6.8 (Flask 3.0→2.0, Werkzeug 3.0→2.0 等)
+- 🔧 **modified**: CHANGELOG.md - 重写为完整使用手册，包含 CentOS 7 systemd 部署指南和依赖版本说明
+- 🐛 **fixed**: CentOS 7 greenlet 编译失败 - requirements.txt 锁定 greenlet==2.0.2，文档补充 gcc/python3-devel 前置依赖
+
+## [2026-06-04]
+
+- ✨ **added**: 移动端退出登录按钮（底部 TabBar 新增「退出」入口）
+- ✨ **added**: 10 分钟无操作自动退出登录（桌面端 + 移动端均生效）
+- ✨ **added**: 全局速率限制（每 IP 并发 ≤ 30，每分钟请求 ≤ 1000）
+- ✨ **added**: 服务器默认监听地址改为 `0.0.0.0`（支持局域网访问）
+- ✨ **added**: API 接口文档补充完整请求/响应示例
+- ✨ **added**: 新增 README.md 项目文档

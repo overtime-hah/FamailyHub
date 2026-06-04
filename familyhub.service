@@ -1,0 +1,16 @@
+[Unit]
+Description=FamilyHub - 家庭信息共享平台
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/FamilyHub
+ExecStart=/bin/bash /opt/FamilyHub/start_Family.sh
+Restart=always
+RestartSec=3
+Environment=FLASK_HOST=0.0.0.0
+Environment=FLASK_PORT=417
+
+[Install]
+WantedBy=multi-user.target

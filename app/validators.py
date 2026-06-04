@@ -60,13 +60,15 @@ def validate_date(date_str):
     """Validate a YYYY-MM-DD date string.
 
     Returns a datetime.date object or raises ValueError.
+    Compatible with Python 3.6+ (date.fromisoformat requires 3.7+).
     """
     if not isinstance(date_str, str) or not date_str.strip():
         raise ValueError("日期不能为空")
     cleaned = date_str.strip()
     try:
-        return date.fromisoformat(cleaned)
-    except (ValueError, AttributeError):
+        from datetime import datetime
+        return datetime.strptime(cleaned, "%Y-%m-%d").date()
+    except ValueError:
         raise ValueError("日期格式无效，请使用 YYYY-MM-DD")
 
 

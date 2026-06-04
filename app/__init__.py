@@ -1,6 +1,8 @@
 """FamilyHub 应用工厂"""
 import os
 import time
+from collections import defaultdict
+from threading import Lock
 from flask import Flask, send_from_directory, jsonify, request
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
@@ -29,6 +31,54 @@ def _mask_sensitive(data):
     return data
 
 
+class GlobalRateLimiter:
+    """全局速率限制器：每 IP 并发不超过 30，每分钟请求不超过 1000"""
+
+    def __init__(self):
+        self._lock = Lock()
+        self._concurrent = defaultdict(int)   # ip -> 当前并发数
+        self._timestamps = defaultdict(list)  # ip -> [timestamp, ...]
+
+    def _get_ip(self):
+        forwarded = request.headers.get("X-Forwarded-For")
+        if forwarded:
+            return forwarded.split(",")[0].strip()
+        return request.remote_addr or "unknown"
+
+    def check(self):
+        """检查是否超限，返回 (allowed, error_msg, status_code) 或 None"""
+        ip = self._get_ip()
+
+        with self._lock:
+            # 1. 并发限制（30）
+            if self._concurrent[ip] >= 30:
+                return None, "请求过于频繁，请稍后再试", 429
+            self._concurrent[ip] += 1
+
+            # 2. 每分钟请求数限制（1000）
+            now = time.time()
+            window = self._timestamps[ip]
+            # 清理 60 秒前的记录
+            self._timestamps[ip] = [t for t in window if now - t < 60]
+            if len(self._timestamps[ip]) >= 1000:
+                self._concurrent[ip] -= 1
+                return None, "请求次数已达上限，请稍后再试", 429
+            self._timestamps[ip].append(now)
+
+        return True, None, None
+
+    def release(self):
+        """请求完成，释放并发计数"""
+        ip = self._get_ip()
+        with self._lock:
+            if self._concurrent[ip] > 0:
+                self._concurrent[ip] -= 1
+
+
+# 全局实例
+_global_limiter = GlobalRateLimiter()
+
+
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
@@ -40,7 +90,7 @@ def create_app():
     init_log()
 
     # 初始化扩展 — CORS 限制允许的来源
-    allowed_origins = os.environ.get("CORS_ORIGINS", "http://127.0.0.1:417,http://localhost:417").split(",")
+    allowed_origins = os.environ.get("CORS_ORIGINS", "http://0.0.0.0:417,http://127.0.0.1:417,http://localhost:417").split(",")
     CORS(app, supports_credentials=True, origins=allowed_origins)
     db.init_app(app)
     JWTManager(app)
@@ -51,6 +101,23 @@ def create_app():
         """限制请求体大小为 16 MB"""
         if request.content_length and request.content_length > 16 * 1024 * 1024:
             return jsonify({"msg": "请求体过大"}), 413
+
+    # ── 全局速率限制（并发≤30，每分钟≤1000）──────
+    @app.before_request
+    def _global_rate_limit():
+        """全局速率限制，仅对 /api/ 接口生效"""
+        if not request.path.startswith("/api/"):
+            return
+        allowed, msg, code = _global_limiter.check()
+        if not allowed:
+            return jsonify({"msg": msg}), code
+
+    @app.after_request
+    def _global_rate_release(response):
+        """请求完成后释放并发计数"""
+        if request.path.startswith("/api/"):
+            _global_limiter.release()
+        return response
 
     # ── 请求计时 ──────────────────────────────────────
     @app.before_request

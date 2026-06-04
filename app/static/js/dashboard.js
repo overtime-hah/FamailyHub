@@ -50,12 +50,41 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   });
 
-  // 退出登录
-  document.getElementById("btn-logout").addEventListener("click", function() {
+  // 退出登录（桌面侧边栏 + 移动端 TabBar）
+  function doLogout() {
     localStorage.removeItem("access_token");
     localStorage.removeItem("user");
     window.location.href = "/";
+  }
+  document.getElementById("btn-logout").addEventListener("click", doLogout);
+  var btnLogoutMobile = document.getElementById("btn-logout-mobile");
+  if (btnLogoutMobile) {
+    btnLogoutMobile.addEventListener("click", function(e) {
+      e.preventDefault();
+      doLogout();
+    });
+  }
+
+  // ── 10 分钟无操作自动退出 ──────────────────────
+  var IDLE_TIMEOUT = 10 * 60 * 1000; // 10 分钟
+  var idleTimer = null;
+
+  function resetIdleTimer() {
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(function() {
+      // 清除登录状态并跳转
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("user");
+      alert("您已超过 10 分钟未操作，请重新登录");
+      window.location.href = "/";
+    }, IDLE_TIMEOUT);
+  }
+
+  // 监听用户操作事件
+  ["mousedown", "mousemove", "keydown", "scroll", "touchstart", "click"].forEach(function(evt) {
+    document.addEventListener(evt, resetIdleTimer, { passive: true });
   });
+  resetIdleTimer(); // 初始化计时器
 
   // Lightbox 点击关闭
   const lightbox = document.getElementById("lightbox");

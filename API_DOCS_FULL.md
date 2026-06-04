@@ -1,6 +1,6 @@
 # FamilyHub API 接口完整文档
 
-> **Base URL:** `http://127.0.0.1:417`  
+> **Base URL:** `http://0.0.0.0:417`（局域网内任意设备可访问）
 > **认证方式:** JWT Bearer Token  
 > **Content-Type:** `application/json`（文件上传除外用 `multipart/form-data`）
 
@@ -175,11 +175,24 @@ Authorization: Bearer <access_token>
 
 **请求参数：** 无
 
+**请求示例：**
+```bash
+curl -X POST http://0.0.0.0:417/api/auth/refresh \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
 **成功响应 200：**
 
 | 字段 | 类型 | 说明 |
 |------|------|------|
 | access_token | string | 新的 JWT Token |
+
+**响应示例：**
+```json
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0ODk1MjAwMCwianRpIjoiM2FlZGFiY2QtMTIzNC01Njc4LTkwMTItMzQ1Njc4OTBhYmNkIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNzQ4OTUyMDAwLCJleHAiOjE3NDkwMzg0MDB9.new_signature_here"
+}
+```
 
 ---
 
@@ -188,6 +201,12 @@ Authorization: Bearer <access_token>
 **需要 Token：** ✅
 
 **请求参数：** 无
+
+**请求示例：**
+```bash
+curl http://0.0.0.0:417/api/auth/me \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
 
 **成功响应 200：**
 
@@ -202,6 +221,22 @@ Authorization: Bearer <access_token>
 | user.family_id | int | 家庭 ID |
 | user.role | string | 角色 |
 
+**响应示例：**
+```json
+{
+  "user": {
+    "id": 1,
+    "username": "admin",
+    "email": "admin@familyhub.local",
+    "nickname": "爸爸",
+    "birthday": null,
+    "avatar_url": "",
+    "family_id": 1,
+    "role": "admin"
+  }
+}
+```
+
 ---
 
 ### PUT /api/auth/password — 修改密码
@@ -215,11 +250,26 @@ Authorization: Bearer <access_token>
 | old_password | string | ✅ | 当前密码，最长 128 字符 |
 | new_password | string | ✅ | 新密码，至少 6 位，最长 128 字符 |
 
+**请求示例：**
+```json
+{
+  "old_password": "admin123",
+  "new_password": "newpass456"
+}
+```
+
 **成功响应 200：**
 
 | 字段 | 类型 | 说明 |
 |------|------|------|
 | msg | string | `"密码已修改"` |
+
+**响应示例：**
+```json
+{
+  "msg": "密码已修改"
+}
+```
 
 **错误响应：**
 
@@ -242,6 +292,12 @@ Authorization: Bearer <access_token>
 ### GET /api/family/info — 获取家庭信息
 
 **请求参数：** 无
+
+**请求示例：**
+```bash
+curl http://0.0.0.0:417/api/family/info \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
 
 **成功响应 200：**
 
@@ -267,6 +323,55 @@ Authorization: Bearer <access_token>
 | members[].user.family_id | int | 家庭 ID |
 | members[].user.role | string | 角色 |
 
+**响应示例：**
+```json
+{
+  "family": {
+    "id": 1,
+    "name": "温暖小窝",
+    "invite_code": "ABC123",
+    "created_at": "2026-06-04T10:00:00",
+    "member_count": 3
+  },
+  "members": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "family_id": 1,
+      "role": "admin",
+      "joined_at": "2026-06-04T10:00:00",
+      "user": {
+        "id": 1,
+        "username": "admin",
+        "email": "admin@familyhub.local",
+        "nickname": "爸爸",
+        "birthday": null,
+        "avatar_url": "",
+        "family_id": 1,
+        "role": "admin"
+      }
+    },
+    {
+      "id": 2,
+      "user_id": 2,
+      "family_id": 1,
+      "role": "adult",
+      "joined_at": "2026-06-04T10:00:00",
+      "user": {
+        "id": 2,
+        "username": "user1",
+        "email": "user1@familyhub.local",
+        "nickname": "妈妈",
+        "birthday": null,
+        "avatar_url": "",
+        "family_id": 1,
+        "role": "adult"
+      }
+    }
+  ]
+}
+```
+
 ---
 
 ### GET /api/family/invite-code — 获取邀请码
@@ -275,11 +380,24 @@ Authorization: Bearer <access_token>
 
 **请求参数：** 无
 
+**请求示例：**
+```bash
+curl http://0.0.0.0:417/api/family/invite-code \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
 **成功响应 200：**
 
 | 字段 | 类型 | 说明 |
 |------|------|------|
 | invite_code | string | 当前邀请码，6 位大写字母+数字 |
+
+**响应示例：**
+```json
+{
+  "invite_code": "ABC123"
+}
+```
 
 **错误：** 403 `"仅管理员可查看邀请码"`
 
@@ -291,11 +409,24 @@ Authorization: Bearer <access_token>
 
 **请求参数：** 无
 
+**请求示例：**
+```bash
+curl -X POST http://0.0.0.0:417/api/family/invite-code \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
 **成功响应 200：**
 
 | 字段 | 类型 | 说明 |
 |------|------|------|
 | invite_code | string | 新生成的邀请码 |
+
+**响应示例：**
+```json
+{
+  "invite_code": "XYZ789"
+}
+```
 
 ---
 
@@ -315,7 +446,21 @@ Authorization: Bearer <access_token>
 |------|------|------|------|--------|
 | role | string | ✅ | 新角色 | `"admin"` / `"adult"` / `"child"` |
 
+**请求示例：**
+```json
+{
+  "role": "adult"
+}
+```
+
 **成功响应 200：** `{"msg": "角色已更新"}`
+
+**响应示例：**
+```json
+{
+  "msg": "角色已更新"
+}
+```
 
 **错误：** 404 `"成员不存在"` / 400 `"无效的角色"`
 
@@ -331,7 +476,20 @@ Authorization: Bearer <access_token>
 |------|------|------|
 | member_id | int | 家庭成员记录 ID |
 
+**请求示例：**
+```bash
+curl -X DELETE http://0.0.0.0:417/api/family/members/3 \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
 **成功响应 200：** `{"msg": "成员已移出"}`
+
+**响应示例：**
+```json
+{
+  "msg": "成员已移出"
+}
+```
 
 **错误：** 400 `"不能移出自己"`
 
@@ -356,11 +514,35 @@ Authorization: Bearer <access_token>
 | birthday | string \| null | ❌ | 生日 `YYYY-MM-DD`，传 null 清除 | `"2018-05-15"` |
 | avatar_url | string | ❌ | 头像 URL | `"https://..."` |
 
+**请求示例：**
+```json
+{
+  "nickname": "小明同学",
+  "birthday": "2018-05-15"
+}
+```
+
 **成功响应 200：**
 
 | 字段 | 类型 | 说明 |
 |------|------|------|
 | user | object | 更新后的用户信息（结构同登录接口的 user） |
+
+**响应示例：**
+```json
+{
+  "user": {
+    "id": 3,
+    "username": "child1",
+    "email": "child1@familyhub.local",
+    "nickname": "小明同学",
+    "birthday": "2018-05-15",
+    "avatar_url": "",
+    "family_id": 1,
+    "role": "child"
+  }
+}
+```
 
 ---
 
@@ -380,7 +562,21 @@ Authorization: Bearer <access_token>
 |------|------|------|------|
 | new_password | string | ✅ | 新密码，至少 6 位 |
 
+**请求示例：**
+```json
+{
+  "new_password": "newpass123"
+}
+```
+
 **成功响应 200：** `{"msg": "密码已重置"}`
+
+**响应示例：**
+```json
+{
+  "msg": "密码已重置"
+}
+```
 
 ---
 
@@ -394,7 +590,31 @@ Authorization: Bearer <access_token>
 | birthday | string \| null | ❌ | 生日 `YYYY-MM-DD` |
 | avatar_url | string | ❌ | 头像 URL |
 
+**请求示例：**
+```json
+{
+  "nickname": "新昵称",
+  "birthday": "1990-01-15"
+}
+```
+
 **成功响应 200：** `{"user": {...}}`
+
+**响应示例：**
+```json
+{
+  "user": {
+    "id": 1,
+    "username": "admin",
+    "email": "admin@familyhub.local",
+    "nickname": "新昵称",
+    "birthday": "1990-01-15",
+    "avatar_url": "",
+    "family_id": 1,
+    "role": "admin"
+  }
+}
+```
 
 ---
 
@@ -402,7 +622,20 @@ Authorization: Bearer <access_token>
 
 **请求参数：** 无
 
+**请求示例：**
+```bash
+curl -X POST http://0.0.0.0:417/api/family/leave \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
 **成功响应 200：** `{"msg": "已退出家庭"}`
+
+**响应示例：**
+```json
+{
+  "msg": "已退出家庭"
+}
+```
 
 **错误：** 400 `"你是唯一的管理员，请先将管理员权限转移给其他成员"`
 
@@ -422,6 +655,12 @@ Authorization: Bearer <access_token>
 |------|------|------|--------|------|
 | page | int | ❌ | 1 | 页码 |
 | per_page | int | ❌ | 30 | 每页条数 |
+
+**请求示例：**
+```bash
+curl "http://0.0.0.0:417/api/feed/list?page=1&per_page=10" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
 
 **成功响应 200：**
 
@@ -444,6 +683,44 @@ Authorization: Bearer <access_token>
 | total | int | 总条数 |
 | pages | int | 总页数 |
 
+**响应示例：**
+```json
+{
+  "feeds": [
+    {
+      "id": 1,
+      "family_id": 1,
+      "user_id": 1,
+      "username": "爸爸",
+      "content": "欢迎加入温暖小窝！这是我们的家庭共享空间 🏠",
+      "type": "announcement",
+      "is_pinned": true,
+      "created_at": "2026-06-04T10:00:00"
+    },
+    {
+      "id": 2,
+      "family_id": 1,
+      "user_id": 2,
+      "username": "妈妈",
+      "content": "妈妈加入了家庭",
+      "type": "member",
+      "is_pinned": false,
+      "created_at": "2026-06-04T09:50:00"
+    }
+  ],
+  "upcoming_birthdays": [
+    {
+      "user_id": 3,
+      "username": "小明",
+      "birthday": "2018-05-15",
+      "days_left": 11
+    }
+  ],
+  "total": 3,
+  "pages": 1
+}
+```
+
 ---
 
 ### POST /api/feed/announcement — 发布公告
@@ -456,7 +733,30 @@ Authorization: Bearer <access_token>
 |------|------|------|------|
 | content | string | ✅ | 公告内容 |
 
+**请求示例：**
+```json
+{
+  "content": "明天家里大扫除，请大家准备好清洁工具！"
+}
+```
+
 **成功响应 201：** `{"feed": {...}}`
+
+**响应示例：**
+```json
+{
+  "feed": {
+    "id": 4,
+    "family_id": 1,
+    "user_id": 1,
+    "username": "爸爸",
+    "content": "明天家里大扫除，请大家准备好清洁工具！",
+    "type": "announcement",
+    "is_pinned": false,
+    "created_at": "2026-06-04T15:30:00"
+  }
+}
+```
 
 ---
 
@@ -470,7 +770,20 @@ Authorization: Bearer <access_token>
 
 **权限：** 管理员可删除任意动态，普通成员只能删除自己的
 
+**请求示例：**
+```bash
+curl -X DELETE http://0.0.0.0:417/api/feed/2 \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
 **成功响应 200：** `{"msg": "已删除"}`
+
+**响应示例：**
+```json
+{
+  "msg": "已删除"
+}
+```
 
 ---
 
@@ -488,6 +801,12 @@ Authorization: Bearer <access_token>
 |------|------|------|--------|------|
 | year | int | ❌ | 当前年 | 年份 |
 | month | int | ❌ | 当前月 | 月份 1-12 |
+
+**请求示例：**
+```bash
+curl "http://0.0.0.0:417/api/calendar/events?year=2026&month=6" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
 
 **成功响应 200：**
 
@@ -508,6 +827,44 @@ Authorization: Bearer <access_token>
 | events[].color | string | 颜色，如 `"#ff9500"` |
 | events[].created_at | string | 创建时间 |
 
+**响应示例：**
+```json
+{
+  "events": [
+    {
+      "id": 1,
+      "family_id": 1,
+      "creator_id": 1,
+      "creator_name": "爸爸",
+      "title": "家庭聚餐",
+      "start": "2026-06-06T10:00:00",
+      "end": "2026-06-06T12:00:00",
+      "all_day": false,
+      "location": "家里",
+      "description": "周末家庭聚餐",
+      "repeat_rule": "none",
+      "color": "#ff9500",
+      "created_at": "2026-06-04T10:00:00"
+    },
+    {
+      "id": 2,
+      "family_id": 1,
+      "creator_id": 2,
+      "creator_name": "妈妈",
+      "title": "小明家长会",
+      "start": "2026-06-09T09:00:00",
+      "end": "2026-06-09T11:00:00",
+      "all_day": false,
+      "location": "学校",
+      "description": "期中家长会",
+      "repeat_rule": "none",
+      "color": "#007aff",
+      "created_at": "2026-06-04T10:00:00"
+    }
+  ]
+}
+```
+
 ---
 
 ### POST /api/calendar/events — 创建事件
@@ -525,7 +882,42 @@ Authorization: Bearer <access_token>
 | repeat_rule | string | ❌ | 重复规则，默认 `"none"` | `"weekly"` |
 | color | string | ❌ | 颜色，默认 `"#007aff"` | `"#ff9500"` |
 
+**请求示例：**
+```json
+{
+  "title": "家庭聚餐",
+  "start": "2026-06-06T10:00:00",
+  "end": "2026-06-06T12:00:00",
+  "all_day": false,
+  "location": "家里",
+  "description": "周末家庭聚餐",
+  "repeat_rule": "none",
+  "color": "#ff9500"
+}
+```
+
 **成功响应 201：** `{"event": {...}}`
+
+**响应示例：**
+```json
+{
+  "event": {
+    "id": 3,
+    "family_id": 1,
+    "creator_id": 1,
+    "creator_name": "爸爸",
+    "title": "家庭聚餐",
+    "start": "2026-06-06T10:00:00",
+    "end": "2026-06-06T12:00:00",
+    "all_day": false,
+    "location": "家里",
+    "description": "周末家庭聚餐",
+    "repeat_rule": "none",
+    "color": "#ff9500",
+    "created_at": "2026-06-04T15:30:00"
+  }
+}
+```
 
 ---
 
@@ -533,11 +925,54 @@ Authorization: Bearer <access_token>
 
 所有字段同创建接口，全部可选。
 
+**请求示例：**
+```json
+{
+  "title": "家庭聚餐（改期）",
+  "start": "2026-06-07T10:00:00",
+  "end": "2026-06-07T12:00:00"
+}
+```
+
+**响应示例：**
+```json
+{
+  "event": {
+    "id": 3,
+    "family_id": 1,
+    "creator_id": 1,
+    "creator_name": "爸爸",
+    "title": "家庭聚餐（改期）",
+    "start": "2026-06-07T10:00:00",
+    "end": "2026-06-07T12:00:00",
+    "all_day": false,
+    "location": "家里",
+    "description": "周末家庭聚餐",
+    "repeat_rule": "none",
+    "color": "#ff9500",
+    "created_at": "2026-06-04T15:30:00"
+  }
+}
+```
+
 ---
 
 ### DELETE /api/calendar/events/{event_id} — 删除事件
 
+**请求示例：**
+```bash
+curl -X DELETE http://0.0.0.0:417/api/calendar/events/3 \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
 **成功响应 200：** `{"msg": "已删除"}`
+
+**响应示例：**
+```json
+{
+  "msg": "已删除"
+}
+```
 
 ---
 
@@ -556,6 +991,12 @@ Authorization: Bearer <access_token>
 | page | int | ❌ | 1 | 页码 |
 | per_page | int | ❌ | 20 | 每页条数 |
 
+**请求示例：**
+```bash
+curl "http://0.0.0.0:417/api/tasks/shopping?page=1&per_page=10" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
 **成功响应 200：**
 
 | 字段 | 类型 | 说明 |
@@ -573,6 +1014,37 @@ Authorization: Bearer <access_token>
 | page | int | 当前页 |
 | pages | int | 总页数 |
 
+**响应示例：**
+```json
+{
+  "items": [
+    {
+      "id": 1,
+      "family_id": 1,
+      "added_by": 1,
+      "adder_name": "爸爸",
+      "name": "牛奶",
+      "quantity": "2瓶",
+      "bought": false,
+      "created_at": "2026-06-04T10:00:00"
+    },
+    {
+      "id": 2,
+      "family_id": 1,
+      "added_by": 2,
+      "adder_name": "妈妈",
+      "name": "面包",
+      "quantity": "1袋",
+      "bought": true,
+      "created_at": "2026-06-04T10:00:00"
+    }
+  ],
+  "total": 3,
+  "page": 1,
+  "pages": 1
+}
+```
+
 ---
 
 ### POST /api/tasks/shopping — 添加购物物品
@@ -582,7 +1054,31 @@ Authorization: Bearer <access_token>
 | name | string | ✅ | 物品名称 | `"牛奶"` |
 | quantity | string | ❌ | 数量，默认 `"1"` | `"2瓶"` |
 
+**请求示例：**
+```json
+{
+  "name": "牛奶",
+  "quantity": "2瓶"
+}
+```
+
 **成功响应 201：** `{"item": {...}}`
+
+**响应示例：**
+```json
+{
+  "item": {
+    "id": 4,
+    "family_id": 1,
+    "added_by": 1,
+    "adder_name": "爸爸",
+    "name": "牛奶",
+    "quantity": "2瓶",
+    "bought": false,
+    "created_at": "2026-06-04T15:30:00"
+  }
+}
+```
 
 ---
 
@@ -594,15 +1090,57 @@ Authorization: Bearer <access_token>
 | name | string | ❌ | 修改名称 |
 | quantity | string | ❌ | 修改数量 |
 
+**请求示例：**
+```json
+{
+  "bought": true
+}
+```
+
+**响应示例：**
+```json
+{
+  "item": {
+    "id": 1,
+    "family_id": 1,
+    "added_by": 1,
+    "adder_name": "爸爸",
+    "name": "牛奶",
+    "quantity": "2瓶",
+    "bought": true,
+    "created_at": "2026-06-04T10:00:00"
+  }
+}
+```
+
 ---
 
 ### DELETE /api/tasks/shopping/{item_id} — 删除购物物品
+
+**请求示例：**
+```bash
+curl -X DELETE http://0.0.0.0:417/api/tasks/shopping/1 \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+**响应示例：**
+```json
+{
+  "msg": "已删除"
+}
+```
 
 ---
 
 ### GET /api/tasks/chores — 家务待办
 
 **请求参数：** `page`、`per_page`（同购物清单）
+
+**请求示例：**
+```bash
+curl "http://0.0.0.0:417/api/tasks/chores?page=1&per_page=10" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
 
 **成功响应 200：**
 
@@ -620,6 +1158,50 @@ Authorization: Bearer <access_token>
 | tasks[].created_at | string | 创建时间 |
 | total / page / pages | int | 分页信息 |
 
+**响应示例：**
+```json
+{
+  "tasks": [
+    {
+      "id": 1,
+      "family_id": 1,
+      "creator_id": 1,
+      "assignee_id": 1,
+      "assignee_name": "爸爸",
+      "title": "倒垃圾",
+      "due_date": "2026-06-04",
+      "completed": false,
+      "created_at": "2026-06-04T10:00:00"
+    },
+    {
+      "id": 2,
+      "family_id": 1,
+      "creator_id": 2,
+      "assignee_id": 1,
+      "assignee_name": "爸爸",
+      "title": "修理水龙头",
+      "due_date": "2026-06-07",
+      "completed": false,
+      "created_at": "2026-06-04T10:00:00"
+    },
+    {
+      "id": 3,
+      "family_id": 1,
+      "creator_id": 1,
+      "assignee_id": 2,
+      "assignee_name": "妈妈",
+      "title": "整理衣柜",
+      "due_date": "2026-06-05",
+      "completed": true,
+      "created_at": "2026-06-04T10:00:00"
+    }
+  ],
+  "total": 3,
+  "page": 1,
+  "pages": 1
+}
+```
+
 ---
 
 ### POST /api/tasks/chores — 创建待办
@@ -629,6 +1211,32 @@ Authorization: Bearer <access_token>
 | title | string | ✅ | 待办标题 | `"倒垃圾"` |
 | due_date | string | ❌ | 截止日期 `YYYY-MM-DD` | `"2026-06-05"` |
 | assignee_id | int | ❌ | 负责人用户 ID，默认当前用户 | `1` |
+
+**请求示例：**
+```json
+{
+  "title": "倒垃圾",
+  "due_date": "2026-06-05",
+  "assignee_id": 1
+}
+```
+
+**响应示例：**
+```json
+{
+  "task": {
+    "id": 4,
+    "family_id": 1,
+    "creator_id": 1,
+    "assignee_id": 1,
+    "assignee_name": "爸爸",
+    "title": "倒垃圾",
+    "due_date": "2026-06-05",
+    "completed": false,
+    "created_at": "2026-06-04T15:30:00"
+  }
+}
+```
 
 ---
 
@@ -641,13 +1249,56 @@ Authorization: Bearer <access_token>
 | assignee_id | int | ❌ | 修改负责人 |
 | due_date | string | ❌ | 修改截止日期 |
 
+**请求示例：**
+```json
+{
+  "completed": true
+}
+```
+
+**响应示例：**
+```json
+{
+  "task": {
+    "id": 1,
+    "family_id": 1,
+    "creator_id": 1,
+    "assignee_id": 1,
+    "assignee_name": "爸爸",
+    "title": "倒垃圾",
+    "due_date": "2026-06-04",
+    "completed": true,
+    "created_at": "2026-06-04T10:00:00"
+  }
+}
+```
+
 ---
 
 ### DELETE /api/tasks/chores/{task_id} — 删除待办
 
+**请求示例：**
+```bash
+curl -X DELETE http://0.0.0.0:417/api/tasks/chores/1 \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+**响应示例：**
+```json
+{
+  "msg": "已删除"
+}
+```
+
 ---
 
 ### GET /api/tasks/wishes — 心愿单
+
+**请求示例：**
+```bash
+curl http://0.0.0.0:417/api/tasks/wishes \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
 
 **成功响应 200：**
 
@@ -663,6 +1314,34 @@ Authorization: Bearer <access_token>
 | wishes[].note | string | 备注 |
 | wishes[].created_at | string | 创建时间 |
 
+**响应示例：**
+```json
+{
+  "wishes": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "username": "爸爸",
+      "family_id": 1,
+      "name": "机械键盘",
+      "link": "https://example.com/keyboard",
+      "note": "Cherry MX 茶轴",
+      "created_at": "2026-06-04T10:00:00"
+    },
+    {
+      "id": 2,
+      "user_id": 2,
+      "username": "妈妈",
+      "family_id": 1,
+      "name": "瑜伽垫",
+      "link": "https://example.com/mat",
+      "note": "加厚防滑款",
+      "created_at": "2026-06-04T10:00:00"
+    }
+  ]
+}
+```
+
 ---
 
 ### POST /api/tasks/wishes — 添加心愿
@@ -673,13 +1352,74 @@ Authorization: Bearer <access_token>
 | link | string | ❌ | 购买链接 | `"https://..."` |
 | note | string | ❌ | 备注 | `"Cherry MX 茶轴"` |
 
+**请求示例：**
+```json
+{
+  "name": "机械键盘",
+  "link": "https://example.com/keyboard",
+  "note": "Cherry MX 茶轴"
+}
+```
+
+**响应示例：**
+```json
+{
+  "wish": {
+    "id": 3,
+    "user_id": 1,
+    "username": "爸爸",
+    "family_id": 1,
+    "name": "机械键盘",
+    "link": "https://example.com/keyboard",
+    "note": "Cherry MX 茶轴",
+    "created_at": "2026-06-04T15:30:00"
+  }
+}
+```
+
 ---
 
 ### PUT /api/tasks/wishes/{wish_id} — 更新心愿（仅限自己的）
 
+**请求示例：**
+```json
+{
+  "note": "Cherry MX 红轴，静音版"
+}
+```
+
+**响应示例：**
+```json
+{
+  "wish": {
+    "id": 1,
+    "user_id": 1,
+    "username": "爸爸",
+    "family_id": 1,
+    "name": "机械键盘",
+    "link": "https://example.com/keyboard",
+    "note": "Cherry MX 红轴，静音版",
+    "created_at": "2026-06-04T10:00:00"
+  }
+}
+```
+
 ---
 
 ### DELETE /api/tasks/wishes/{wish_id} — 删除心愿（自己的或管理员）
+
+**请求示例：**
+```bash
+curl -X DELETE http://0.0.0.0:417/api/tasks/wishes/1 \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+**响应示例：**
+```json
+{
+  "msg": "已删除"
+}
+```
 
 ---
 
@@ -700,6 +1440,12 @@ Authorization: Bearer <access_token>
 | page | int | ❌ | 页码，默认 1 |
 | per_page | int | ❌ | 每页条数，默认 20 |
 
+**请求示例：**
+```bash
+curl "http://0.0.0.0:417/api/notes/wiki?q=WiFi&category=家电" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
 **成功响应 200：**
 
 | 字段 | 类型 | 说明 |
@@ -716,6 +1462,28 @@ Authorization: Bearer <access_token>
 | notes[].updated_at | string | 更新时间 |
 | total / page / pages | int | 分页信息 |
 
+**响应示例：**
+```json
+{
+  "notes": [
+    {
+      "id": 1,
+      "family_id": 1,
+      "author_id": 1,
+      "author_name": "爸爸",
+      "title": "WiFi 信息",
+      "content_md": "**WiFi名称**: WarmHome\n**密码**: 12345678\n\n管理地址: http://192.168.1.1",
+      "category": "家电",
+      "created_at": "2026-06-04T10:00:00",
+      "updated_at": "2026-06-04T10:00:00"
+    }
+  ],
+  "total": 1,
+  "page": 1,
+  "pages": 1
+}
+```
+
 ---
 
 ### POST /api/notes/wiki — 创建笔记
@@ -726,21 +1494,90 @@ Authorization: Bearer <access_token>
 | content_md | string | ❌ | 内容，支持 Markdown |
 | category | string | ❌ | 分类 |
 
+**请求示例：**
+```json
+{
+  "title": "急救电话",
+  "content_md": "火警: 119\n急救: 120\n报警: 110\n\n小区物业: 8888-1234",
+  "category": "急救"
+}
+```
+
+**响应示例：**
+```json
+{
+  "note": {
+    "id": 3,
+    "family_id": 1,
+    "author_id": 1,
+    "author_name": "爸爸",
+    "title": "急救电话",
+    "content_md": "火警: 119\n急救: 120\n报警: 110\n\n小区物业: 8888-1234",
+    "category": "急救",
+    "created_at": "2026-06-04T15:30:00",
+    "updated_at": "2026-06-04T15:30:00"
+  }
+}
+```
+
 ---
 
 ### PUT /api/notes/wiki/{note_id} — 更新笔记
 
 所有字段可选，同创建接口。
 
+**请求示例：**
+```json
+{
+  "content_md": "**WiFi名称**: WarmHome\n**密码**: 12345678\n\n管理地址: http://192.168.1.1\n\n**注意**: 密码已修改"
+}
+```
+
+**响应示例：**
+```json
+{
+  "note": {
+    "id": 1,
+    "family_id": 1,
+    "author_id": 1,
+    "author_name": "爸爸",
+    "title": "WiFi 信息",
+    "content_md": "**WiFi名称**: WarmHome\n**密码**: 12345678\n\n管理地址: http://192.168.1.1\n\n**注意**: 密码已修改",
+    "category": "家电",
+    "created_at": "2026-06-04T10:00:00",
+    "updated_at": "2026-06-04T15:30:00"
+  }
+}
+```
+
 ---
 
 ### DELETE /api/notes/wiki/{note_id} — 删除笔记
+
+**请求示例：**
+```bash
+curl -X DELETE http://0.0.0.0:417/api/notes/wiki/1 \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+**响应示例：**
+```json
+{
+  "msg": "已删除"
+}
+```
 
 ---
 
 ### GET /api/notes/recipes — 食谱
 
 **请求参数：** `q`（搜索菜名）、`page`、`per_page`
+
+**请求示例：**
+```bash
+curl "http://0.0.0.0:417/api/notes/recipes?q=番茄" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
 
 **成功响应 200：**
 
@@ -757,6 +1594,25 @@ Authorization: Bearer <access_token>
 | recipes[].image_url | string | 图片 URL |
 | recipes[].created_at | string | 创建时间 |
 
+**响应示例：**
+```json
+{
+  "recipes": [
+    {
+      "id": 1,
+      "family_id": 1,
+      "author_id": 2,
+      "author_name": "妈妈",
+      "name": "番茄炒蛋",
+      "ingredients": "番茄2个, 鸡蛋3个, 盐适量, 糖少许",
+      "steps": "1. 鸡蛋打散加盐\n2. 番茄切块\n3. 先炒蛋出锅\n4. 炒番茄出汁后加入蛋翻炒",
+      "image_url": "",
+      "created_at": "2026-06-04T10:00:00"
+    }
+  ]
+}
+```
+
 ---
 
 ### POST /api/notes/recipes — 创建食谱
@@ -768,17 +1624,87 @@ Authorization: Bearer <access_token>
 | steps | string | ❌ | 步骤 | `"1. 打蛋\n2. 切番茄"` |
 | image_url | string | ❌ | 图片链接 | `""` |
 
+**请求示例：**
+```json
+{
+  "name": "番茄炒蛋",
+  "ingredients": "番茄2个, 鸡蛋3个, 盐适量, 糖少许",
+  "steps": "1. 鸡蛋打散加盐\n2. 番茄切块\n3. 先炒蛋出锅\n4. 炒番茄出汁后加入蛋翻炒",
+  "image_url": ""
+}
+```
+
+**响应示例：**
+```json
+{
+  "recipe": {
+    "id": 2,
+    "family_id": 1,
+    "author_id": 1,
+    "author_name": "爸爸",
+    "name": "番茄炒蛋",
+    "ingredients": "番茄2个, 鸡蛋3个, 盐适量, 糖少许",
+    "steps": "1. 鸡蛋打散加盐\n2. 番茄切块\n3. 先炒蛋出锅\n4. 炒番茄出汁后加入蛋翻炒",
+    "image_url": "",
+    "created_at": "2026-06-04T15:30:00"
+  }
+}
+```
+
 ---
 
 ### PUT /api/notes/recipes/{recipe_id} — 更新食谱
+
+**请求示例：**
+```json
+{
+  "steps": "1. 鸡蛋打散加盐\n2. 番茄切块\n3. 先炒蛋出锅\n4. 炒番茄出汁后加入蛋翻炒\n5. 出锅前加少许糖提鲜"
+}
+```
+
+**响应示例：**
+```json
+{
+  "recipe": {
+    "id": 1,
+    "family_id": 1,
+    "author_id": 2,
+    "author_name": "妈妈",
+    "name": "番茄炒蛋",
+    "ingredients": "番茄2个, 鸡蛋3个, 盐适量, 糖少许",
+    "steps": "1. 鸡蛋打散加盐\n2. 番茄切块\n3. 先炒蛋出锅\n4. 炒番茄出汁后加入蛋翻炒\n5. 出锅前加少许糖提鲜",
+    "image_url": "",
+    "created_at": "2026-06-04T10:00:00"
+  }
+}
+```
 
 ---
 
 ### DELETE /api/notes/recipes/{recipe_id} — 删除食谱
 
+**请求示例：**
+```bash
+curl -X DELETE http://0.0.0.0:417/api/notes/recipes/1 \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+**响应示例：**
+```json
+{
+  "msg": "已删除"
+}
+```
+
 ---
 
 ### GET /api/notes/messages — 留言板
+
+**请求示例：**
+```bash
+curl http://0.0.0.0:417/api/notes/messages \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
 
 **成功响应 200：**
 
@@ -800,6 +1726,40 @@ Authorization: Bearer <access_token>
 | messages[].replies[].parent_id | int | 所回复的留言 ID |
 | messages[].replies[].created_at | string | 回复时间 |
 
+**响应示例：**
+```json
+{
+  "messages": [
+    {
+      "id": 1,
+      "family_id": 1,
+      "author_id": 1,
+      "author_name": "爸爸",
+      "content": "晚上想吃什么？",
+      "parent_id": null,
+      "created_at": "2026-06-04T07:00:00",
+      "reply_count": 2,
+      "replies": [
+        {
+          "id": 2,
+          "author_name": "妈妈",
+          "content": "火锅怎么样？",
+          "parent_id": 1,
+          "created_at": "2026-06-04T08:00:00"
+        },
+        {
+          "id": 3,
+          "author_name": "小明",
+          "content": "好耶！吃火锅！",
+          "parent_id": 1,
+          "created_at": "2026-06-04T09:00:00"
+        }
+      ]
+    }
+  ]
+}
+```
+
 ---
 
 ### POST /api/notes/messages — 发送留言/回复
@@ -809,11 +1769,54 @@ Authorization: Bearer <access_token>
 | content | string | ✅ | 留言内容 |
 | parent_id | int | ❌ | 父留言 ID，不传=新留言，传值=回复该留言 |
 
+**请求示例 — 新留言：**
+```json
+{
+  "content": "明天记得买牛奶哦！"
+}
+```
+
+**请求示例 — 回复留言：**
+```json
+{
+  "content": "好的，我记下了！",
+  "parent_id": 1
+}
+```
+
+**响应示例：**
+```json
+{
+  "message": {
+    "id": 4,
+    "family_id": 1,
+    "author_id": 1,
+    "author_name": "爸爸",
+    "content": "明天记得买牛奶哦！",
+    "parent_id": null,
+    "created_at": "2026-06-04T15:30:00"
+  }
+}
+```
+
 ---
 
 ### DELETE /api/notes/messages/{msg_id} — 删除留言
 
 **权限：** 作者或管理员
+
+**请求示例：**
+```bash
+curl -X DELETE http://0.0.0.0:417/api/notes/messages/1 \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+**响应示例：**
+```json
+{
+  "msg": "已删除"
+}
+```
 
 ---
 
@@ -824,6 +1827,12 @@ Authorization: Bearer <access_token>
 ### GET /api/album/albums — 相册列表
 
 **需要 Token：** ✅
+
+**请求示例：**
+```bash
+curl http://0.0.0.0:417/api/album/albums \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
 
 **成功响应 200：**
 
@@ -838,6 +1847,23 @@ Authorization: Bearer <access_token>
 | albums[].photo_count | int | 照片数量 |
 | albums[].created_at | string | 创建时间 |
 
+**响应示例：**
+```json
+{
+  "albums": [
+    {
+      "id": 1,
+      "family_id": 1,
+      "creator_id": 1,
+      "creator_name": "爸爸",
+      "name": "家庭相册",
+      "photo_count": 0,
+      "created_at": "2026-06-04T10:00:00"
+    }
+  ]
+}
+```
+
 ---
 
 ### POST /api/album/albums — 创建相册
@@ -846,13 +1872,54 @@ Authorization: Bearer <access_token>
 |------|------|------|------|
 | name | string | ✅ | 相册名称 |
 
+**请求示例：**
+```json
+{
+  "name": "旅行相册"
+}
+```
+
+**响应示例：**
+```json
+{
+  "album": {
+    "id": 2,
+    "family_id": 1,
+    "creator_id": 1,
+    "creator_name": "爸爸",
+    "name": "旅行相册",
+    "photo_count": 0,
+    "created_at": "2026-06-04T15:30:00"
+  }
+}
+```
+
 ---
 
 ### DELETE /api/album/albums/{album_id} — 删除相册（含所有照片文件）
 
+**请求示例：**
+```bash
+curl -X DELETE http://0.0.0.0:417/api/album/albums/2 \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+**响应示例：**
+```json
+{
+  "msg": "相册已删除"
+}
+```
+
 ---
 
 ### GET /api/album/albums/{album_id}/photos — 获取照片列表
+
+**请求示例：**
+```bash
+curl http://0.0.0.0:417/api/album/albums/1/photos \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
 
 **成功响应 200：**
 
@@ -878,6 +1945,37 @@ Authorization: Bearer <access_token>
 | photos[].comments[].content | string | 评论内容 |
 | photos[].comments[].created_at | string | 评论时间 |
 
+**响应示例：**
+```json
+{
+  "photos": [
+    {
+      "id": 1,
+      "album_id": 1,
+      "album_name": "家庭相册",
+      "uploader_id": 1,
+      "uploader_name": "爸爸",
+      "filename": "abc123-def456.jpg",
+      "url": "/uploads/abc123-def456.jpg",
+      "description": "全家福",
+      "taken_at": "2026-06-04T12:00:00",
+      "upload_time": "2026-06-04T15:30:00",
+      "comment_count": 1,
+      "comments": [
+        {
+          "id": 1,
+          "photo_id": 1,
+          "user_id": 2,
+          "username": "妈妈",
+          "content": "拍得真好！",
+          "created_at": "2026-06-04T16:00:00"
+        }
+      ]
+    }
+  ]
+}
+```
+
 ---
 
 ### POST /api/album/albums/{album_id}/photos — 上传照片
@@ -890,12 +1988,49 @@ Authorization: Bearer <access_token>
 | description | string | ❌ | 照片描述 |
 | taken_at | string | ❌ | 拍摄时间 ISO 格式 |
 
+**请求示例（curl）：**
+```bash
+curl -X POST http://0.0.0.0:417/api/album/albums/1/photos \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+  -F "photos=@photo1.jpg" \
+  -F "photos=@photo2.jpg" \
+  -F "description=全家福" \
+  -F "taken_at=2026-06-04T12:00:00"
+```
+
 **成功响应 201：**
 
 | 字段 | 类型 | 说明 |
 |------|------|------|
 | photos[] | array | 上传成功的照片列表 |
 | msg | string | 如 `"上传了 2 张照片"` |
+
+**响应示例：**
+```json
+{
+  "photos": [
+    {
+      "id": 2,
+      "album_id": 1,
+      "filename": "uuid-photo-1.jpg",
+      "url": "/uploads/uuid-photo-1.jpg",
+      "description": "全家福",
+      "taken_at": "2026-06-04T12:00:00",
+      "upload_time": "2026-06-04T15:30:00"
+    },
+    {
+      "id": 3,
+      "album_id": 1,
+      "filename": "uuid-photo-2.jpg",
+      "url": "/uploads/uuid-photo-2.jpg",
+      "description": "全家福",
+      "taken_at": "2026-06-04T12:00:00",
+      "upload_time": "2026-06-04T15:30:00"
+    }
+  ],
+  "msg": "上传了 2 张照片"
+}
+```
 
 ---
 
@@ -905,9 +2040,44 @@ Authorization: Bearer <access_token>
 |------|------|------|------|
 | description | string | ❌ | 新描述 |
 
+**请求示例：**
+```json
+{
+  "description": "2026年全家福"
+}
+```
+
+**响应示例：**
+```json
+{
+  "photo": {
+    "id": 1,
+    "album_id": 1,
+    "filename": "abc123-def456.jpg",
+    "url": "/uploads/abc123-def456.jpg",
+    "description": "2026年全家福",
+    "taken_at": "2026-06-04T12:00:00",
+    "upload_time": "2026-06-04T15:30:00"
+  }
+}
+```
+
 ---
 
 ### DELETE /api/album/photos/{photo_id} — 删除照片
+
+**请求示例：**
+```bash
+curl -X DELETE http://0.0.0.0:417/api/album/photos/1 \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+**响应示例：**
+```json
+{
+  "msg": "照片已删除"
+}
+```
 
 ---
 
@@ -917,7 +2087,28 @@ Authorization: Bearer <access_token>
 |------|------|------|------|
 | content | string | ✅ | 评论内容 |
 
+**请求示例：**
+```json
+{
+  "content": "拍得真好！"
+}
+```
+
 **成功响应 201：** `{"comment": {...}}`
+
+**响应示例：**
+```json
+{
+  "comment": {
+    "id": 2,
+    "photo_id": 1,
+    "user_id": 2,
+    "username": "妈妈",
+    "content": "拍得真好！",
+    "created_at": "2026-06-04T16:00:00"
+  }
+}
+```
 
 ---
 
@@ -928,6 +2119,12 @@ Authorization: Bearer <access_token>
 ### GET /api/files/folders — 文件夹列表
 
 **需要 Token：** ✅
+
+**请求示例：**
+```bash
+curl http://0.0.0.0:417/api/files/folders \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
 
 **成功响应 200：**
 
@@ -940,6 +2137,35 @@ Authorization: Bearer <access_token>
 | folders[].file_count | int | 文件数量 |
 | folders[].created_at | string | 创建时间 |
 
+**响应示例：**
+```json
+{
+  "folders": [
+    {
+      "id": 1,
+      "family_id": 1,
+      "name": "医疗",
+      "file_count": 0,
+      "created_at": "2026-06-04T10:00:00"
+    },
+    {
+      "id": 2,
+      "family_id": 1,
+      "name": "教育",
+      "file_count": 0,
+      "created_at": "2026-06-04T10:00:00"
+    },
+    {
+      "id": 3,
+      "family_id": 1,
+      "name": "合同",
+      "file_count": 0,
+      "created_at": "2026-06-04T10:00:00"
+    }
+  ]
+}
+```
+
 ---
 
 ### POST /api/files/folders — 创建文件夹
@@ -948,13 +2174,52 @@ Authorization: Bearer <access_token>
 |------|------|------|------|
 | name | string | ✅ | 文件夹名称 |
 
+**请求示例：**
+```json
+{
+  "name": "保险"
+}
+```
+
+**响应示例：**
+```json
+{
+  "folder": {
+    "id": 4,
+    "family_id": 1,
+    "name": "保险",
+    "file_count": 0,
+    "created_at": "2026-06-04T15:30:00"
+  }
+}
+```
+
 ---
 
 ### DELETE /api/files/folders/{folder_id} — 删除文件夹（含所有文件）
 
+**请求示例：**
+```bash
+curl -X DELETE http://0.0.0.0:417/api/files/folders/3 \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+**响应示例：**
+```json
+{
+  "msg": "文件夹已删除"
+}
+```
+
 ---
 
 ### GET /api/files/folders/{folder_id}/files — 获取文件列表
+
+**请求示例：**
+```bash
+curl http://0.0.0.0:417/api/files/folders/1/files \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
 
 **成功响应 200：**
 
@@ -972,6 +2237,26 @@ Authorization: Bearer <access_token>
 | files[].url | string | 访问路径 `/uploads/xxx` |
 | files[].upload_time | string | 上传时间 |
 
+**响应示例：**
+```json
+{
+  "files": [
+    {
+      "id": 1,
+      "folder_id": 1,
+      "folder_name": "医疗",
+      "uploader_id": 1,
+      "uploader_name": "爸爸",
+      "filename": "uuid-file-1.pdf",
+      "original_name": "体检报告.pdf",
+      "size": 1024000,
+      "url": "/uploads/uuid-file-1.pdf",
+      "upload_time": "2026-06-04T15:30:00"
+    }
+  ]
+}
+```
+
 ---
 
 ### POST /api/files/folders/{folder_id}/files — 上传文件
@@ -982,6 +2267,14 @@ Authorization: Bearer <access_token>
 |------|------|------|------|
 | files | file[] | ✅ | 文件，支持 png/jpg/jpeg/gif/pdf/doc/docx/xls/xlsx/txt/zip |
 
+**请求示例（curl）：**
+```bash
+curl -X POST http://0.0.0.0:417/api/files/folders/1/files \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+  -F "files=@report.pdf" \
+  -F "files=@contract.docx"
+```
+
 **成功响应 201：**
 
 | 字段 | 类型 | 说明 |
@@ -989,9 +2282,49 @@ Authorization: Bearer <access_token>
 | files[] | array | 上传成功的文件列表 |
 | msg | string | 如 `"上传了 2 个文件"` |
 
+**响应示例：**
+```json
+{
+  "files": [
+    {
+      "id": 2,
+      "folder_id": 1,
+      "filename": "uuid-file-2.pdf",
+      "original_name": "report.pdf",
+      "size": 2048000,
+      "url": "/uploads/uuid-file-2.pdf",
+      "upload_time": "2026-06-04T15:30:00"
+    },
+    {
+      "id": 3,
+      "folder_id": 1,
+      "filename": "uuid-file-3.docx",
+      "original_name": "contract.docx",
+      "size": 512000,
+      "url": "/uploads/uuid-file-3.docx",
+      "upload_time": "2026-06-04T15:30:00"
+    }
+  ],
+  "msg": "上传了 2 个文件"
+}
+```
+
 ---
 
 ### DELETE /api/files/files/{file_id} — 删除文件
+
+**请求示例：**
+```bash
+curl -X DELETE http://0.0.0.0:417/api/files/files/1 \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+**响应示例：**
+```json
+{
+  "msg": "文件已删除"
+}
+```
 
 ---
 
@@ -1012,6 +2345,12 @@ Authorization: Bearer <access_token>
 | category | string | ❌ | 分类筛选 |
 | page | int | ❌ | 页码 |
 | per_page | int | ❌ | 每页条数 |
+
+**请求示例：**
+```bash
+curl "http://0.0.0.0:417/api/finance/transactions?month=2026-06&type=expense" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
 
 **成功响应 200：**
 
@@ -1036,6 +2375,68 @@ Authorization: Bearer <access_token>
 | by_category[].amount | float | 该分类总金额 |
 | total / page / pages | int | 分页信息 |
 
+**响应示例：**
+```json
+{
+  "transactions": [
+    {
+      "id": 1,
+      "family_id": 1,
+      "user_id": 1,
+      "username": "爸爸",
+      "type": "expense",
+      "category": "餐饮",
+      "amount": 128.5,
+      "note": "周末外出吃饭",
+      "date": "2026-06-02",
+      "created_at": "2026-06-02T20:00:00"
+    },
+    {
+      "id": 2,
+      "family_id": 1,
+      "user_id": 2,
+      "username": "妈妈",
+      "type": "expense",
+      "category": "购物",
+      "amount": 350.0,
+      "note": "超市采购",
+      "date": "2026-06-03",
+      "created_at": "2026-06-03T15:00:00"
+    },
+    {
+      "id": 3,
+      "family_id": 1,
+      "user_id": 1,
+      "username": "爸爸",
+      "type": "income",
+      "category": "工资",
+      "amount": 15000.0,
+      "note": "月薪",
+      "date": "2026-06-04",
+      "created_at": "2026-06-04T10:00:00"
+    }
+  ],
+  "summary": {
+    "income": 15000.0,
+    "expense": 478.5,
+    "balance": 14521.5
+  },
+  "by_category": [
+    {
+      "category": "餐饮",
+      "amount": 128.5
+    },
+    {
+      "category": "购物",
+      "amount": 350.0
+    }
+  ],
+  "total": 3,
+  "page": 1,
+  "pages": 1
+}
+```
+
 ---
 
 ### POST /api/finance/transactions — 创建收支记录
@@ -1048,19 +2449,93 @@ Authorization: Bearer <access_token>
 | date | string | ❌ | 日期 `YYYY-MM-DD`，默认今天 | `"2026-06-01"` |
 | note | string | ❌ | 备注 | `"周末外出吃饭"` |
 
+**请求示例：**
+```json
+{
+  "type": "expense",
+  "amount": 128.5,
+  "category": "餐饮",
+  "date": "2026-06-04",
+  "note": "周末外出吃饭"
+}
+```
+
+**响应示例：**
+```json
+{
+  "transaction": {
+    "id": 4,
+    "family_id": 1,
+    "user_id": 1,
+    "username": "爸爸",
+    "type": "expense",
+    "category": "餐饮",
+    "amount": 128.5,
+    "note": "周末外出吃饭",
+    "date": "2026-06-04",
+    "created_at": "2026-06-04T15:30:00"
+  }
+}
+```
+
 ---
 
 ### PUT /api/finance/transactions/{tx_id} — 更新记录
 
 所有字段可选，同创建接口。
 
+**请求示例：**
+```json
+{
+  "amount": 150.0,
+  "note": "周末外出吃饭（含酒水）"
+}
+```
+
+**响应示例：**
+```json
+{
+  "transaction": {
+    "id": 1,
+    "family_id": 1,
+    "user_id": 1,
+    "username": "爸爸",
+    "type": "expense",
+    "category": "餐饮",
+    "amount": 150.0,
+    "note": "周末外出吃饭（含酒水）",
+    "date": "2026-06-02",
+    "created_at": "2026-06-02T20:00:00"
+  }
+}
+```
+
 ---
 
 ### DELETE /api/finance/transactions/{tx_id} — 删除记录
 
+**请求示例：**
+```bash
+curl -X DELETE http://0.0.0.0:417/api/finance/transactions/1 \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+**响应示例：**
+```json
+{
+  "msg": "已删除"
+}
+```
+
 ---
 
 ### GET /api/finance/bills — 账单提醒
+
+**请求示例：**
+```bash
+curl http://0.0.0.0:417/api/finance/bills \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
 
 **成功响应 200：**
 
@@ -1076,6 +2551,34 @@ Authorization: Bearer <access_token>
 | bills[].last_reminded | string \| null | 上次提醒日期 |
 | bills[].days_until_due | int | 距离下次到期还有几天 |
 
+**响应示例：**
+```json
+{
+  "bills": [
+    {
+      "id": 1,
+      "family_id": 1,
+      "creator_id": 1,
+      "title": "房租",
+      "amount": 3500.0,
+      "due_day": 1,
+      "last_reminded": null,
+      "days_until_due": 27
+    },
+    {
+      "id": 2,
+      "family_id": 1,
+      "creator_id": 1,
+      "title": "网费",
+      "amount": 99.0,
+      "due_day": 15,
+      "last_reminded": null,
+      "days_until_due": 11
+    }
+  ]
+}
+```
+
 ---
 
 ### POST /api/finance/bills — 创建账单
@@ -1086,13 +2589,74 @@ Authorization: Bearer <access_token>
 | amount | float | ❌ | 金额，默认 0 | `3500.0` |
 | due_day | int | ❌ | 到期日 1-31，默认 1 | `15` |
 
+**请求示例：**
+```json
+{
+  "title": "房租",
+  "amount": 3500.0,
+  "due_day": 1
+}
+```
+
+**响应示例：**
+```json
+{
+  "bill": {
+    "id": 3,
+    "family_id": 1,
+    "creator_id": 1,
+    "title": "房租",
+    "amount": 3500.0,
+    "due_day": 1,
+    "last_reminded": null,
+    "days_until_due": 27
+  }
+}
+```
+
 ---
 
 ### PUT /api/finance/bills/{bill_id} — 更新账单
 
+**请求示例：**
+```json
+{
+  "amount": 3600.0
+}
+```
+
+**响应示例：**
+```json
+{
+  "bill": {
+    "id": 1,
+    "family_id": 1,
+    "creator_id": 1,
+    "title": "房租",
+    "amount": 3600.0,
+    "due_day": 1,
+    "last_reminded": null,
+    "days_until_due": 27
+  }
+}
+```
+
 ---
 
 ### DELETE /api/finance/bills/{bill_id} — 删除账单
+
+**请求示例：**
+```bash
+curl -X DELETE http://0.0.0.0:417/api/finance/bills/1 \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+**响应示例：**
+```json
+{
+  "msg": "已删除"
+}
+```
 
 ---
 
@@ -1113,11 +2677,38 @@ Authorization: Bearer <access_token>
 
 **说明：** 已有位置则更新，没有则创建（upsert）
 
+**请求示例：**
+```json
+{
+  "latitude": 39.9042,
+  "longitude": 116.4074
+}
+```
+
 **成功响应 200：** `{"location": {...}}`
+
+**响应示例：**
+```json
+{
+  "location": {
+    "id": 1,
+    "user_id": 1,
+    "latitude": 39.9042,
+    "longitude": 116.4074,
+    "timestamp": "2026-06-04T15:30:00"
+  }
+}
+```
 
 ---
 
 ### GET /api/location/members — 获取所有成员位置
+
+**请求示例：**
+```bash
+curl http://0.0.0.0:417/api/location/members \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
 
 **成功响应 200：**
 
@@ -1134,9 +2725,69 @@ Authorization: Bearer <access_token>
 | members[].location.longitude | float | 经度 |
 | members[].location.timestamp | string | 上报时间 |
 
+**响应示例：**
+```json
+{
+  "members": [
+    {
+      "user_id": 1,
+      "username": "爸爸",
+      "role": "admin",
+      "avatar_url": "",
+      "location": {
+        "id": 1,
+        "latitude": 39.9042,
+        "longitude": 116.4074,
+        "timestamp": "2026-06-04T15:30:00"
+      }
+    },
+    {
+      "user_id": 2,
+      "username": "妈妈",
+      "role": "adult",
+      "avatar_url": "",
+      "location": {
+        "id": 2,
+        "latitude": 39.9088,
+        "longitude": 116.3974,
+        "timestamp": "2026-06-04T15:25:00"
+      }
+    },
+    {
+      "user_id": 3,
+      "username": "小明",
+      "role": "child",
+      "avatar_url": "",
+      "location": null
+    }
+  ]
+}
+```
+
 ---
 
 ### GET /api/location/my-history — 获取自己的位置
+
+**请求示例：**
+```bash
+curl http://0.0.0.0:417/api/location/my-history \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+**成功响应 200：** `{"location": {...}}` 或 `{"location": null}`
+
+**响应示例：**
+```json
+{
+  "location": {
+    "id": 1,
+    "user_id": 1,
+    "latitude": 39.9042,
+    "longitude": 116.4074,
+    "timestamp": "2026-06-04T15:30:00"
+  }
+}
+```
 
 **成功响应 200：** `{"location": {...}}` 或 `{"location": null}`
 
@@ -1159,6 +2810,12 @@ Authorization: Bearer <access_token>
 | page | int | ❌ | 页码 |
 | per_page | int | ❌ | 每页条数 |
 
+**请求示例：**
+```bash
+curl "http://0.0.0.0:417/api/health/records?user_id=1&record_type=weight" \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
 **成功响应 200：**
 
 | 字段 | 类型 | 说明 |
@@ -1176,6 +2833,29 @@ Authorization: Bearer <access_token>
 | records[].created_at | string | 创建时间 |
 | total / page / pages | int | 分页信息 |
 
+**响应示例：**
+```json
+{
+  "records": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "username": "爸爸",
+      "family_id": 1,
+      "record_type": "weight",
+      "value": "75",
+      "unit": "kg",
+      "record_date": "2026-06-04",
+      "note": "",
+      "created_at": "2026-06-04T10:00:00"
+    }
+  ],
+  "total": 1,
+  "page": 1,
+  "pages": 1
+}
+```
+
 ---
 
 ### POST /api/health/records — 创建健康记录
@@ -1189,17 +2869,92 @@ Authorization: Bearer <access_token>
 | record_date | string | ❌ | 日期 `YYYY-MM-DD`，默认今天 | `"2026-06-03"` |
 | note | string | ❌ | 备注 | `""` |
 
+**请求示例：**
+```json
+{
+  "record_type": "weight",
+  "value": "75",
+  "user_id": 1,
+  "unit": "kg",
+  "record_date": "2026-06-04",
+  "note": ""
+}
+```
+
+**响应示例：**
+```json
+{
+  "record": {
+    "id": 2,
+    "user_id": 1,
+    "username": "爸爸",
+    "family_id": 1,
+    "record_type": "weight",
+    "value": "75",
+    "unit": "kg",
+    "record_date": "2026-06-04",
+    "note": "",
+    "created_at": "2026-06-04T15:30:00"
+  }
+}
+```
+
 ---
 
 ### PUT /api/health/records/{record_id} — 更新记录
+
+**请求示例：**
+```json
+{
+  "value": "76",
+  "note": "体重增加"
+}
+```
+
+**响应示例：**
+```json
+{
+  "record": {
+    "id": 1,
+    "user_id": 1,
+    "username": "爸爸",
+    "family_id": 1,
+    "record_type": "weight",
+    "value": "76",
+    "unit": "kg",
+    "record_date": "2026-06-04",
+    "note": "体重增加",
+    "created_at": "2026-06-04T10:00:00"
+  }
+}
+```
 
 ---
 
 ### DELETE /api/health/records/{record_id} — 删除记录
 
+**请求示例：**
+```bash
+curl -X DELETE http://0.0.0.0:417/api/health/records/1 \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+**响应示例：**
+```json
+{
+  "msg": "已删除"
+}
+```
+
 ---
 
 ### GET /api/health/pets — 宠物列表
+
+**请求示例：**
+```bash
+curl http://0.0.0.0:417/api/health/pets \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
 
 **成功响应 200：**
 
@@ -1217,6 +2972,26 @@ Authorization: Bearer <access_token>
 | pets[].deworming_soon | bool | 驱虫是否 7 天内到期 |
 | pets[].vaccine_soon | bool | 疫苗是否 7 天内到期 |
 
+**响应示例：**
+```json
+{
+  "pets": [
+    {
+      "id": 1,
+      "family_id": 1,
+      "name": "毛球",
+      "species": "英短蓝猫",
+      "deworming_date": "2026-07-04",
+      "vaccine_date": "2026-08-03",
+      "note": "活泼好动",
+      "created_at": "2026-06-04T10:00:00",
+      "deworming_soon": false,
+      "vaccine_soon": false
+    }
+  ]
+}
+```
+
 ---
 
 ### POST /api/health/pets — 创建宠物
@@ -1229,13 +3004,81 @@ Authorization: Bearer <access_token>
 | vaccine_date | string | ❌ | 疫苗日期 `YYYY-MM-DD` | `"2026-08-02"` |
 | note | string | ❌ | 备注 | `"活泼好动"` |
 
+**请求示例：**
+```json
+{
+  "name": "毛球",
+  "species": "英短蓝猫",
+  "deworming_date": "2026-07-04",
+  "vaccine_date": "2026-08-03",
+  "note": "活泼好动"
+}
+```
+
+**响应示例：**
+```json
+{
+  "pet": {
+    "id": 2,
+    "family_id": 1,
+    "name": "毛球",
+    "species": "英短蓝猫",
+    "deworming_date": "2026-07-04",
+    "vaccine_date": "2026-08-03",
+    "note": "活泼好动",
+    "created_at": "2026-06-04T15:30:00",
+    "deworming_soon": false,
+    "vaccine_soon": false
+  }
+}
+```
+
 ---
 
 ### PUT /api/health/pets/{pet_id} — 更新宠物
 
+**请求示例：**
+```json
+{
+  "deworming_date": "2026-08-04",
+  "note": "已驱虫，状态良好"
+}
+```
+
+**响应示例：**
+```json
+{
+  "pet": {
+    "id": 1,
+    "family_id": 1,
+    "name": "毛球",
+    "species": "英短蓝猫",
+    "deworming_date": "2026-08-04",
+    "vaccine_date": "2026-08-03",
+    "note": "已驱虫，状态良好",
+    "created_at": "2026-06-04T10:00:00",
+    "deworming_soon": false,
+    "vaccine_soon": false
+  }
+}
+```
+
 ---
 
 ### DELETE /api/health/pets/{pet_id} — 删除宠物
+
+**请求示例：**
+```bash
+curl -X DELETE http://0.0.0.0:417/api/health/pets/1 \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+**响应示例：**
+```json
+{
+  "msg": "已删除"
+}
+```
 
 ---
 
@@ -1280,7 +3123,7 @@ Authorization: Bearer <access_token>
 
 ```bash
 # 1. 登录获取 Token
-curl -X POST http://127.0.0.1:417/api/auth/login \
+curl -X POST http://0.0.0.0:417/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"username":"admin","password":"admin123"}'
 
@@ -1290,17 +3133,17 @@ curl -X POST http://127.0.0.1:417/api/auth/login \
 TOKEN="eyJhbG..."
 
 # 3. 调用需要认证的接口
-curl http://127.0.0.1:417/api/family/info \
+curl http://0.0.0.0:417/api/family/info \
   -H "Authorization: Bearer $TOKEN"
 
 # 4. 创建数据
-curl -X POST http://127.0.0.1:417/api/tasks/chores \
+curl -X POST http://0.0.0.0:417/api/tasks/chores \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $TOKEN" \
   -d '{"title":"倒垃圾","due_date":"2026-06-05"}'
 
 # 5. 上传文件
-curl -X POST http://127.0.0.1:417/api/files/folders/1/files \
+curl -X POST http://0.0.0.0:417/api/files/folders/1/files \
   -H "Authorization: Bearer $TOKEN" \
   -F "files=@report.pdf"
 ```
@@ -1310,7 +3153,7 @@ curl -X POST http://127.0.0.1:417/api/files/folders/1/files \
 ```python
 import requests
 
-BASE = "http://127.0.0.1:417"
+BASE = "http://0.0.0.0:417"
 
 # 1. 登录
 r = requests.post(f"{BASE}/api/auth/login", json={
@@ -1346,7 +3189,7 @@ print(r.json())
 ### JavaScript 完整流程
 
 ```javascript
-const BASE = "http://127.0.0.1:417";
+const BASE = "http://0.0.0.0:417";
 
 // 1. 登录
 const loginRes = await fetch(`${BASE}/api/auth/login`, {
