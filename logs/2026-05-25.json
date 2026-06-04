@@ -1,0 +1,128 @@
+[
+  {
+    "timestamp": "2026-05-25T14:31:38.971736",
+    "action": "added",
+    "detail": "FamilyHub 服务启动",
+    "author": "system"
+  },
+  {
+    "timestamp": "2026-05-25T14:31:39.096738",
+    "action": "added",
+    "detail": "日志管理系统集成到应用工厂",
+    "author": "system"
+  },
+  {
+    "timestamp": "2026-05-25T14:31:39.112364",
+    "action": "created",
+    "detail": "log_manager.py - 变更日志管理与自动清理模块",
+    "author": "system"
+  },
+  {
+    "timestamp": "2026-05-25T14:31:39.127987",
+    "action": "created",
+    "detail": "CHANGELOG.md - 项目变更日志文档",
+    "author": "system"
+  },
+  {
+    "timestamp": "2026-05-25T14:31:39.127987",
+    "action": "added",
+    "detail": "logs/ 目录 - 按日期存储的 JSON 日志",
+    "author": "system"
+  },
+  {
+    "timestamp": "2026-05-25T14:33:31.707354",
+    "action": "modified",
+    "detail": "CHANGELOG.md - 补充完整使用说明（安装、启动、迁移、项目结构）",
+    "author": "system"
+  },
+  {
+    "timestamp": "2026-05-25T14:45:35.800118",
+    "action": "fixed",
+    "detail": "移除登录表单中预填充的账号密码默认值",
+    "author": "system"
+  },
+  {
+    "timestamp": "2026-05-25T15:05:38.510364",
+    "action": "fixed",
+    "detail": "修复路由竞态导致页面空白 - router.js 加入导航锁，dashboard.js 避免重复触发",
+    "author": "system"
+  },
+  {
+    "timestamp": "2026-05-25T15:05:38.518877",
+    "action": "added",
+    "detail": "用户修改自己密码 - PUT /api/auth/password",
+    "author": "system"
+  },
+  {
+    "timestamp": "2026-05-25T15:05:38.526388",
+    "action": "added",
+    "detail": "管理员编辑成员信息 - PUT /api/family/members/<id>/profile",
+    "author": "system"
+  },
+  {
+    "timestamp": "2026-05-25T15:05:38.542055",
+    "action": "added",
+    "detail": "管理员重置成员密码 - PUT /api/family/members/<id>/password",
+    "author": "system"
+  },
+  {
+    "timestamp": "2026-05-25T15:05:38.558082",
+    "action": "modified",
+    "detail": "family.js - 完整个人信息编辑、密码修改、管理员成员管理界面",
+    "author": "system"
+  },
+  {
+    "timestamp": "2026-05-25T15:12:36.956122",
+    "action": "fixed",
+    "detail": "移除/退出家庭成员时 DetachedInstanceError - 在 commit 前缓存用户名再写入 Feed",
+    "author": "system"
+  },
+  {
+    "timestamp": "2026-05-25T15:57:41.846683",
+    "action": "fixed",
+    "detail": "跨模块全局 render() 函数名冲突 - 全部改为唯一名称 (renderFeed/renderAlbumList/renderFolders等)",
+    "author": "system"
+  },
+  {
+    "timestamp": "2026-05-25T15:57:41.862347",
+    "action": "fixed",
+    "detail": "页面切换时过期异步回调导致渲染错误 - api.js 新增 pageId 守卫，过期响应自动丢弃",
+    "author": "system"
+  },
+  {
+    "timestamp": "2026-05-25T15:57:41.877974",
+    "action": "added",
+    "detail": "IP定位回退方案 - 使用 ip-api.com 免费接口，桌面端无需GPS即可定位",
+    "author": "system"
+  },
+  {
+    "timestamp": "2026-05-25T15:57:41.893598",
+    "action": "added",
+    "detail": "手动输入坐标功能 - 输入经纬度上报位置",
+    "author": "system"
+  },
+  {
+    "timestamp": "2026-05-25T15:57:41.909222",
+    "action": "modified",
+    "detail": "location.js - 三种定位方式选择面板 (GPS / IP / 手动)",
+    "author": "system"
+  },
+  {
+    "timestamp": "2026-05-25T16:19:23.581242",
+    "action": "modified",
+    "detail": "requirements.txt - 降级依赖包以兼容 CentOS 7 Python 3.6.8 (Flask 3.0→2.0, Werkzeug 3.0→2.0 等)",
+    "author": "system"
+  },
+  {
+    "timestamp": "2026-05-25T16:19:23.596883",
+    "action": "modified",
+    "detail": "CHANGELOG.md - 重写为完整使用手册，包含 CentOS 7 systemd 部署指南和依赖版本说明",
+    "author": "system"
+  },
+  {
+    "timestamp": "2026-05-25T16:35:08.320030",
+    "action": "fixed",
+    "detail": "CentOS 7 greenlet 编译失败 - requirements.txt 锁定 greenlet==2.0.2，文档补充 gcc/python3-devel 前置依赖",
+    "author": "system"
+  }
+]

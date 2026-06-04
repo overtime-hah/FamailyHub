@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c \"from app.logger import setup_logging, get_debug_logs, list_debug_log_dates; print\\('logger.py imports OK'\\)\")",
+      "Bash(python -c \"from app import create_app; app = create_app\\(\\); print\\('create_app OK'\\)\")"
+    ]
+  }
+}

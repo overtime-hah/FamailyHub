@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#faf8f5" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1a1816" media="(prefers-color-scheme: dark)">
+<title>FamilyHub - 家庭信息共享</title>
+<link rel="stylesheet" href="/static/css/apple.css">
+<style>
+  .auth-page {
+    display: flex; min-height: 100vh; align-items: center; justify-content: center;
+    padding: 24px;
+    background: var(--bg);
+    position: relative; overflow: hidden;
+  }
+  /* 装饰性背景 */
+  .auth-page::before {
+    content: ''; position: absolute; top: -20%; right: -10%;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(248, 196, 180, 0.25) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .auth-page::after {
+    content: ''; position: absolute; bottom: -15%; left: -5%;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(232, 131, 107, 0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .auth-card {
+    background: var(--card); border-radius: 28px;
+    padding: 44px 40px; width: 100%; max-width: 440px;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--border-light);
+    position: relative; z-index: 1;
+    animation: scaleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .auth-brand { text-align: center; margin-bottom: 32px; }
+  .auth-brand h1 {
+    font-size: 36px; font-weight: 700; letter-spacing: -1px;
+    font-family: var(--font);
+    background: var(--brand-gradient);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .auth-brand p {
+    color: var(--text-secondary); font-size: 15px; margin-top: 8px;
+    font-family: var(--font);
+  }
+
+  .auth-tabs { display: flex; gap: 0; margin-bottom: 28px; border-bottom: 2px solid var(--border-light); }
+  .auth-tab {
+    flex: 1; text-align: center; padding: 12px 8px;
+    font-size: 15px; font-weight: 500; color: var(--text-secondary);
+    cursor: pointer; border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: all var(--transition-smooth);
+    font-family: var(--font);
+  }
+  .auth-tab:hover { color: var(--text-warm); }
+  .auth-tab.active { color: var(--coral); border-bottom-color: var(--coral); }
+
+  .auth-error {
+    color: var(--red); font-size: 13px; min-height: 22px;
+    margin-bottom: 14px; font-family: var(--font);
+    transition: all var(--transition-smooth);
+  }
+
+  .auth-card .btn-primary {
+    width: 100%; margin-top: 4px;
+    padding: 12px; font-size: 16px;
+  }
+
+  .auth-hint {
+    font-size: 12px; color: var(--text-secondary);
+    margin-top: 6px; display: block;
+  }
+
+  @media (max-width: 768px) {
+    .auth-card { padding: 32px 24px; border-radius: 24px; }
+    .auth-brand h1 { font-size: 30px; }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .auth-page::before { background: radial-gradient(circle, rgba(232, 131, 107, 0.06) 0%, transparent 70%); }
+    .auth-page::after { background: radial-gradient(circle, rgba(232, 131, 107, 0.04) 0%, transparent 70%); }
+  }
+</style>
+</head>
+<body class="auth-page">
+<div class="auth-card">
+  <div class="auth-brand">
+    <h1>🏠 FamilyHub</h1>
+    <p>家庭的每一刻，都在这里</p>
+  </div>
+  <div class="auth-tabs">
+    <div class="auth-tab active" data-tab="login">登录</div>
+    <div class="auth-tab" data-tab="register">注册</div>
+  </div>
+
+  <!-- 登录表单 -->
+  <div id="login-form">
+    <div class="auth-error" id="login-error"></div>
+    <div class="form-group">
+      <label>用户名</label>
+      <input class="input" id="login-username" placeholder="输入用户名" autocomplete="username">
+    </div>
+    <div class="form-group">
+      <label>密码</label>
+      <input class="input" type="password" id="login-password" placeholder="输入密码" autocomplete="current-password">
+    </div>
+    <button class="btn btn-primary" id="login-btn">登录</button>
+  </div>
+
+  <!-- 注册表单 -->
+  <div id="reg-form" style="display:none">
+    <div class="auth-error" id="reg-error"></div>
+    <div class="form-group">
+      <label>用户名 *</label>
+      <input class="input" id="reg-username" placeholder="选一个用户名" autocomplete="username">
+    </div>
+    <div class="form-group">
+      <label>邮箱 *</label>
+      <input class="input" type="email" id="reg-email" placeholder="your@email.com" autocomplete="email">
+    </div>
+    <div class="form-group">
+      <label>密码 * (至少6位)</label>
+      <input class="input" type="password" id="reg-password" placeholder="至少6位密码" autocomplete="new-password">
+    </div>
+    <div class="form-group">
+      <label>昵称</label>
+      <input class="input" id="reg-nickname" placeholder="家人怎么称呼你">
+    </div>
+    <div class="form-group">
+      <label>邀请码 (加入已有家庭)</label>
+      <input class="input" id="reg-invite" placeholder="输入邀请码">
+    </div>
+    <div class="form-group">
+      <label>或创建新家庭</label>
+      <input class="input" id="reg-family" placeholder="给你的家庭取个名字">
+      <span class="auth-hint">留空邀请码即创建新家庭</span>
+    </div>
+    <button class="btn btn-primary" id="reg-btn">创建家庭</button>
+  </div>
+</div>
+<script src="/static/js/auth.js"></script>
+</body>
+</html>

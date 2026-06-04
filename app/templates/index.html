@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#faf8f5" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1a1816" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>FamilyHub - 家庭共享空间</title>
+<link rel="stylesheet" href="/static/css/apple.css">
+</head>
+<body>
+<!-- Toast -->
+<div id="toast" class="toast"></div>
+
+<!-- Modal 容器 -->
+<div id="modal-overlay" class="modal-overlay"></div>
+
+<!-- Lightbox -->
+<div id="lightbox" class="lightbox">
+  <img id="lightbox-img" src="" alt="">
+</div>
+
+<div class="app-layout">
+  <!-- 侧边栏 (桌面端) -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">🏠 FamilyHub</div>
+    <nav class="sidebar-nav">
+      <a class="nav-item" data-hash="#/feed" href="#/feed">
+        <span class="nav-icon">🏠</span><span class="nav-label">家庭动态</span>
+      </a>
+      <a class="nav-item" data-hash="#/calendar" href="#/calendar">
+        <span class="nav-icon">📅</span><span class="nav-label">共享日历</span>
+      </a>
+      <a class="nav-item" data-hash="#/tasks" href="#/tasks">
+        <span class="nav-icon">✅</span><span class="nav-label">清单任务</span>
+      </a>
+      <a class="nav-item" data-hash="#/notes" href="#/notes">
+        <span class="nav-icon">📝</span><span class="nav-label">笔记知识</span>
+      </a>
+      <a class="nav-item" data-hash="#/album" href="#/album">
+        <span class="nav-icon">📷</span><span class="nav-label">家庭相册</span>
+      </a>
+      <a class="nav-item" data-hash="#/files" href="#/files">
+        <span class="nav-icon">📁</span><span class="nav-label">文件柜</span>
+      </a>
+      <div style="height:1px;background:var(--border-light);margin:12px 20px"></div>
+      <a class="nav-item nav-item-sensitive" data-hash="#/finance" href="#/finance">
+        <span class="nav-icon">💰</span><span class="nav-label">记账本</span>
+      </a>
+      <a class="nav-item nav-item-sensitive" data-hash="#/location" href="#/location">
+        <span class="nav-icon">📍</span><span class="nav-label">位置共享</span>
+      </a>
+      <a class="nav-item" data-hash="#/health" href="#/health">
+        <span class="nav-icon">❤️</span><span class="nav-label">健康档案</span>
+      </a>
+      <a class="nav-item" data-hash="#/family" href="#/family">
+        <span class="nav-icon">👨‍👩‍👧‍👦</span><span class="nav-label">家庭管理</span>
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-name" id="user-name">加载中...</div>
+        <div class="user-role" id="user-role"></div>
+      </div>
+      <button class="btn btn-ghost btn-sm" id="btn-logout" title="退出登录">退出</button>
+    </div>
+  </aside>
+
+  <!-- 内容区 -->
+  <main class="main-content" id="page-content">
+    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh">
+      <div class="spinner"></div>
+      <p style="text-align:center;color:var(--text-secondary);margin-top:12px;font-family:var(--font)">正在加载...</p>
+    </div>
+  </main>
+</div>
+
+<!-- 底部 TabBar (移动端) -->
+<nav class="tabbar">
+  <a class="tab-item" data-hash="#/feed" href="#/feed">
+    <span class="tab-icon">🏠</span><span>动态</span>
+  </a>
+  <a class="tab-item" data-hash="#/calendar" href="#/calendar">
+    <span class="tab-icon">📅</span><span>日历</span>
+  </a>
+  <a class="tab-item" data-hash="#/tasks" href="#/tasks">
+    <span class="tab-icon">✅</span><span>清单</span>
+  </a>
+  <a class="tab-item" data-hash="#/notes" href="#/notes">
+    <span class="tab-icon">📝</span><span>笔记</span>
+  </a>
+  <a class="tab-item tab-item-sensitive" data-hash="#/finance" href="#/finance">
+    <span class="tab-icon">💰</span><span>记账</span>
+  </a>
+  <a class="tab-item" data-hash="#/family" href="#/family">
+    <span class="tab-icon">👨‍👩‍👧‍👦</span><span>家庭</span>
+  </a>
+</nav>
+
+<script src="/static/js/api.js"></script>
+<script src="/static/js/router.js"></script>
+<script src="/static/js/dashboard.js"></script>
+</body>
+</html>

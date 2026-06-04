@@ -1,0 +1,10 @@
+[2026-06-04 10:11:19] DEBUG ============================================================
+[2026-06-04 10:11:19] DEBUG FamilyHub 调试日志系统已启动
+[2026-06-04 10:11:19] DEBUG 日志目录: E:\CluadeCode Project\famaily_share\FamilyHub\logs
+[2026-06-04 10:11:19] DEBUG 日志保留: 7 天
+[2026-06-04 10:11:19] DEBUG ============================================================
+[2026-06-04 10:11:19] INFO  GET /api/ping -> 200 | 0.000s | IP=127.0.0.1 | User=None
+[2026-06-04 10:11:20] WARNING [SECURITY] LOGIN_SUCCESS | IP=127.0.0.1 | User=1 | username=admin
+[2026-06-04 10:11:20] INFO  POST /api/auth/login -> 200 | 0.488s | IP=127.0.0.1 | User=None | Body={'password': '***', 'username': 'admin'}
+[2026-06-04 10:11:20] WARNING GET /api/nonexistent -> 404 | 0.000s | IP=127.0.0.1 | User=None
+[2026-06-04 10:11:20] WARNING GET /api/family/info -> 401 | 0.001s | IP=127.0.0.1 | User=None
